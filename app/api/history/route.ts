@@ -12,15 +12,23 @@ export async function GET() {
       .order("created_at", { ascending: true });
 
     if (error) {
-      throw new Error(error.message);
+      throw new Error(`Supabase history hatası: ${error.message}`);
     }
 
+    const items = data ?? [];
+
     return NextResponse.json({
-      items: data ?? []
+      count: items.length,
+      first_item: items.length > 0 ? items[0] : null,
+      last_item: items.length > 0 ? items[items.length - 1] : null,
+      items,
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: true, message: err?.message ?? "Bilinmeyen hata" },
+      {
+        error: true,
+        message: err?.message ?? "Bilinmeyen hata",
+      },
       { status: 500 }
     );
   }

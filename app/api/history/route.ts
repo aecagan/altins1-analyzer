@@ -16,11 +16,11 @@ export async function GET() {
     }
 
     const items = data ?? [];
+    const latest = items.length > 0 ? items[items.length - 1] : null;
 
     return NextResponse.json({
       count: items.length,
-      first_item: items.length > 0 ? items[0] : null,
-      last_item: items.length > 0 ? items[items.length - 1] : null,
+      latest,
       items,
     });
   } catch (err: any) {

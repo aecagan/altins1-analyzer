@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    // 1) Kayıtları al
     const { data, error } = await supabase
       .from("altins1_history")
       .select("*")
@@ -15,11 +16,20 @@ export async function GET() {
       throw new Error(`Supabase history hatası: ${error.message}`);
     }
 
+    // 2) Exact count'i ayrı al
+    const { count, error: countError } = await supabase
+      .from("altins1_history")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      throw new Error(`Supabase count hatası: ${countError.message}`);
+    }
+
     const items = data ?? [];
     const latest = items.length > 0 ? items[items.length - 1] : null;
 
     return NextResponse.json({
-      count: items.length,
+      count: count ?? 0,
       latest,
       items,
     });
